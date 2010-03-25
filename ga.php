@@ -31,7 +31,7 @@ class Ga {
             'Expires' => 'Thu, 01 Jan 1970 01:00:00 GMT'
         );
         $params = array(
-            'utmip' => (isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : '',
+            'utmip' => $this->_get_ip_address(),
             'utmhn' => (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : '',
             'utmr' => (isset($_GET['utmr'])) ? $_GET['utmr'] : '',
             'utmp' => (isset($_GET['utmp'])) ? $_GET['utmp'] : '',
@@ -122,6 +122,18 @@ class Ga {
         curl_close($ch);
 
         return ($this->http_code == 200) ? $response : false;
+    }
+
+    private function _get_ip_address() {
+        $ip_address = $_SERVER['REMOTE_ADDR'];
+
+        if ($ip_address
+            && preg_match('/^([^.]+\.[^.]+\.[^.]+\.).*/', $ip_address, $matches)
+        ) {
+            return $matches[1] . '0';
+        }
+
+        return '';
     }
 
     private function _get_visitor() {
